@@ -184,8 +184,8 @@ button,select,input{touch-action:manipulation}
   <div class="card toolbar" id="trackBar"></div>
   <div class="card toolbar" id="vocalBar">
     <label>歌詞</label>
-    <input type="text" id="lyricText" placeholder="れい：あおいそらに（ひらがな）">
-    <button id="btnFlow">音符に ながしこむ</button>
+    <input type="text" id="lyricText" placeholder="れい：あおいそらに（ひらがな）・音符を選ぶとそこから入ります">
+    <button id="btnFlow">最初から ながしこむ</button>
     <label>ビブラート <input type="range" id="vib" min="0" max="80" value="35"></label>
     <label>声色 おとな <input type="range" id="gen" min="-5" max="5" value="0"> こども</label>
   </div>
@@ -1087,6 +1087,7 @@ roll.addEventListener('pointercancel', () => { tap = null; endDrag(); });
 function updateSelBar(){
   $('btnLyric').style.display = curTrack === 'vocal' ? '' : 'none';
   $('btnLyric').disabled = !sel; $('btnDelNote').disabled = !sel;
+  $('btnFlow').textContent = (curTrack === 'vocal' && sel) ? '選んだ音符から ながしこむ' : '最初から ながしこむ';
 }
 function editLyric(n){
   const v = prompt('歌詞（ひらがな1音。のばす音は「ー」）', n.lyric || '');
@@ -1173,15 +1174,19 @@ $('btnEraser').onclick = () => { eraser = !eraser; $('btnEraser').classList.togg
 $('btnUndo').onclick = undo;
 $('btnFlow').onclick = () => {
   const mor = toMorae($('lyricText').value);
-  const notes = [...PJ.tracks.vocal].sort((a, b) => a.s - b.s);
+  const all = [...PJ.tracks.vocal].sort((a, b) => a.s - b.s);
   if (!mor.length){ setSongMsg('歌詞を入れてください'); return; }
-  if (!notes.length){ setSongMsg('先に「うた」の音符をおいてください'); return; }
+  if (!all.length){ setSongMsg('先に「うた」の音符をおいてください'); return; }
+  // 音符を選んでいれば、その音符から入れる
+  const from = (curTrack === 'vocal' && sel) ? Math.max(0, all.indexOf(sel)) : 0;
+  const notes = all.slice(from);
   pushUndo(snapTracks());
   notes.forEach((n, i) => { if (i < mor.length) n.lyric = mor[i]; });
   saveLocal(); drawRoll();
-  if (mor.length > notes.length) setSongMsg(`歌詞が ${mor.length - notes.length}音 あまりました（音符をふやしてね）`);
-  else if (mor.length < notes.length) setSongMsg(`音符が ${notes.length - mor.length}こ あまっています`);
-  else setSongMsg('ぴったり！');
+  const head = from ? `${from + 1}こ目の音符から入れました。` : '';
+  if (mor.length > notes.length) setSongMsg(head + `歌詞が ${mor.length - notes.length}音 あまりました（音符をふやしてね）`);
+  else if (mor.length < notes.length) setSongMsg(head + `うしろの音符 ${notes.length - mor.length}こ は前の歌詞のままです`);
+  else setSongMsg(head + 'ぴったり！');
 };
 
 // ----- 再生 -----
