@@ -5,77 +5,111 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>こえボカロ</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Dela+Gothic+One&family=Zen+Kaku+Gothic+New:wght@500;700;900&family=Outfit:wght@500;700;800&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#fff7ef;--ink:#3b3330;--sub:#8a7f78;--acc:#18b7a8;--acc2:#ff6f91;--line:#eadfd3}
+/* デザイン：Y2Kラベンダー */
+:root{
+  --bg:#f3efff; --paper:#fff; --ink:#16121f; --sub:#6b6385; --line:#16121f; --soft:#e4dcff;
+  --pink:#ff4fa3; --purple:#7b5cff; --mint:#2fd6b5; --yellow:#ffc93c;
+  --acc:var(--purple); --acc2:var(--pink);
+  --jp:"Zen Kaku Gothic New","Hiragino Sans","Yu Gothic UI","Meiryo",sans-serif;
+  --logo:"Dela Gothic One","Zen Kaku Gothic New","Hiragino Sans",sans-serif;
+  --num:"Outfit","Zen Kaku Gothic New",sans-serif;
+  --pop:3px 3px 0 var(--ink);
+}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:"BIZ UDPGothic","Zen Maru Gothic","Hiragino Maru Gothic ProN","Meiryo",sans-serif}
-header{display:flex;align-items:center;gap:16px;padding:10px 16px;background:linear-gradient(90deg,#18b7a8,#5fd6c9);color:#fff;flex-wrap:wrap}
-h1{font-size:22px;margin:0;letter-spacing:1px}
-nav{display:flex;gap:8px}
-nav .tab{background:rgba(255,255,255,.25);color:#fff;border-color:transparent;font-size:17px}
-nav .tab.on{background:#fff;color:var(--acc)}
-button{font:inherit;font-size:15px;border:2px solid var(--line);background:#fff;color:var(--ink);border-radius:12px;padding:7px 13px;cursor:pointer}
-button:hover{border-color:var(--acc)}
-button:disabled{opacity:.5;cursor:default}
-button.on{background:var(--acc);color:#fff;border-color:var(--acc)}
-button.warn{color:#c0395e}
-select,input[type=number],input[type=text]{font:inherit;font-size:15px;padding:5px 7px;border-radius:9px;border:2px solid var(--line);background:#fff}
-input[type=number]{width:70px}
-.card{background:#fff;border-radius:16px;box-shadow:0 2px 8px rgba(0,0,0,.06);padding:12px}
-.page{display:none;padding:12px}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--jp);font-weight:500;
+  background-image:radial-gradient(circle at 1px 1px,#d9cfff 1px,transparent 1.5px);background-size:22px 22px}
+header{display:flex;align-items:center;gap:14px;padding:12px 16px;flex-wrap:wrap;background:var(--paper);border-bottom:2px solid var(--line)}
+h1{font-family:var(--logo);font-weight:400;font-size:24px;margin:0;letter-spacing:.02em;display:flex;align-items:center;gap:8px}
+.heart{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:99px;background:var(--pink);color:#fff;font-size:12px;border:2px solid var(--line)}
+.en{font-family:var(--num);font-weight:700;font-size:11px;letter-spacing:.22em;color:var(--purple)}
+nav{display:flex;gap:8px;margin-left:auto}
+button{font-family:var(--jp);font-weight:700;font-size:15px;border:2px solid var(--line);background:var(--paper);color:var(--ink);
+  border-radius:999px;padding:7px 15px;cursor:pointer;box-shadow:var(--pop);transition:transform .06s,box-shadow .06s}
+button:hover{transform:translate(-1px,-1px);box-shadow:4px 4px 0 var(--ink)}
+button:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
+button:disabled{opacity:.4;cursor:default;transform:none;box-shadow:var(--pop)}
+button.on{background:var(--ink);color:#fff}
+button.warn{color:#e0267f}
+nav .tab{font-size:15px}
+nav .tab.on{background:var(--pink);color:#fff}
+select,input[type=number],input[type=text]{font-family:var(--jp);font-weight:700;font-size:15px;padding:6px 10px;border-radius:12px;border:2px solid var(--line);background:var(--paper);color:var(--ink)}
+input[type=number]{width:74px;font-family:var(--num)}
+input[type=range]{accent-color:var(--pink)}
+input[type=checkbox]{accent-color:var(--purple);width:16px;height:16px}
+.card{background:var(--paper);border-radius:20px;border:2px solid var(--line);box-shadow:4px 4px 0 var(--ink);padding:14px}
+.page{display:none;padding:14px}
 .page.on{display:block}
-.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:6px 0}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:8px 0}
 .small{font-size:13px;color:var(--sub)}
-.msg{min-height:1.4em;color:#d0456b;font-weight:bold;margin:6px 0}
+.msg{min-height:1.4em;color:#e0267f;font-weight:900;margin:6px 0}
 /* 声をつくる */
-.vwrap{display:grid;grid-template-columns:340px 1fr;gap:12px;align-items:start}
-#bigMora{font-size:76px;text-align:center;font-weight:bold;color:var(--acc);line-height:1.15}
-button.rec{background:var(--acc2);color:#fff;border-color:var(--acc2);font-size:22px;width:100%;padding:12px}
-#wave{width:100%;height:110px;background:#faf6f1;border-radius:10px;display:block;margin-top:6px}
-#meter{height:8px;background:#eee;border-radius:4px;overflow:hidden;margin-top:6px}
-#meterBar{height:100%;width:0;background:var(--acc2);transition:width .05s}
-.tip{background:#fff3d6;border-radius:10px;padding:8px 10px;font-size:15px;margin:8px 0 0}
-details{margin:4px 0 10px}
-summary{font-size:17px;font-weight:bold;cursor:pointer;color:var(--acc)}
-.mgrid{display:grid;gap:6px;margin:8px 0;max-width:420px}
-.mora{font-size:21px;padding:7px 0;border-radius:10px}
-.mora.done{background:#d9f5f1;border-color:var(--acc)}
-.mora.sel{outline:3px solid var(--acc2);outline-offset:1px}
+.vwrap{display:grid;grid-template-columns:340px 1fr;gap:16px;align-items:start}
+#bigMora{font-family:var(--logo);font-size:84px;text-align:center;line-height:1.2;color:var(--ink);
+  background:var(--soft);border:2px solid var(--line);border-radius:18px;margin-bottom:10px;position:relative}
+#bigMora::after{content:"✦";position:absolute;right:12px;top:6px;font-size:20px;color:var(--pink)}
+button.rec{background:var(--pink);color:#fff;font-size:22px;width:100%;padding:12px}
+#wave{width:100%;height:110px;background:#faf8ff;border:2px solid var(--line);border-radius:14px;display:block;margin-top:8px}
+#meter{height:10px;background:var(--soft);border:2px solid var(--line);border-radius:99px;overflow:hidden;margin-top:8px}
+#meterBar{height:100%;width:0;background:var(--pink);transition:width .05s}
+.tip{background:#fff6d8;border:2px dashed var(--line);border-radius:14px;padding:8px 12px;font-size:15px;margin:10px 0 0}
+details{margin:6px 0 12px}
+summary{font-family:var(--logo);font-weight:400;font-size:16px;cursor:pointer;color:var(--purple)}
+.mgrid{display:grid;gap:8px;margin:10px 0;max-width:440px}
+.mora{font-size:21px;padding:7px 0;border-radius:14px;box-shadow:2px 2px 0 var(--ink)}
+.mora.done{background:var(--purple);color:#fff}
+.mora.sel{background:var(--pink);color:#fff;outline:none}
 .mora.empty{visibility:hidden}
-.count{font-size:17px;font-weight:bold}
+.count{font-family:var(--logo);font-weight:400;font-size:18px}
+.count b{font-family:var(--num);font-weight:800;color:var(--pink)}
 /* 曲をつくる */
-.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:8px}
-.sep{width:1px;height:28px;background:var(--line);margin:0 4px}
-#btnPlay{background:var(--acc);color:#fff;border-color:var(--acc);font-size:17px;min-width:120px}
-.trk{display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 6px;border-radius:12px}
+.toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:12px}
+.toolbar label{font-weight:700}
+.sep{width:2px;height:28px;background:var(--soft);margin:0 2px;border-radius:2px}
+#btnPlay{background:var(--pink);color:#fff;font-size:17px;min-width:130px}
+.trk{display:flex;flex-direction:column;align-items:center;gap:4px;padding:2px 6px}
 .trk input[type=range]{width:100px}
 .trk label{font-size:12px;color:var(--sub)}
 #vocalBar input[type=text]{flex:1;min-width:220px}
 #vocalBar input[type=range]{width:110px}
-#rollWrap{position:relative;overflow:auto;height:calc(100vh - 400px);min-height:300px;background:#fff;border-radius:12px;border:2px solid var(--line);touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+#rollWrap{position:relative;overflow:auto;height:calc(100vh - 410px);min-height:300px;background:var(--paper);border-radius:18px;border:2px solid var(--line);box-shadow:4px 4px 0 var(--ink);
+  touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 #rollWrap.pan{touch-action:pan-x pan-y}
 button,select,input{touch-action:manipulation}
-#btnMode.pan{background:#ffe9a8;border-color:#f0c040}
-#selBar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:6px 0}
-#roll{display:block}
-#playLine{position:absolute;top:0;width:2px;background:#ff3b6b;display:none;pointer-events:none}
+#btnMode.pan{background:var(--yellow)}
+#selBar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:8px 0 10px}
+#rollSpace{position:relative}
+#roll{display:block;position:sticky;left:0;top:0}
+#playLine{position:absolute;top:0;width:3px;background:var(--pink);display:none;pointer-events:none}
+.dlg{position:fixed;inset:0;background:rgba(22,18,31,.45);display:flex;align-items:center;justify-content:center;z-index:50}
+.dlg[hidden]{display:none}
+.dlgCard{width:min(560px,92vw);max-height:86vh;overflow:auto}
+.dlgTitle{font-family:var(--logo);font-weight:400;font-size:20px;margin:0 0 6px}
+.impRow{display:flex;align-items:center;gap:8px;padding:10px 0;border-bottom:2px dashed var(--soft)}
+.impRow .nm{flex:1;min-width:0}
+.impRow .nm b{display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 @media (max-width:820px){.vwrap{grid-template-columns:1fr}}
 @media (max-width:600px){
-  .page{padding:8px}
-  .card{padding:8px}
-  button{font-size:14px;padding:6px 10px}
-  .toolbar{gap:6px}
+  .page{padding:10px}
+  .card{padding:10px}
+  button{font-size:14px;padding:6px 11px}
+  .toolbar{gap:7px}
   .sep{display:none}
   .trk{flex-direction:row;padding:2px}
   .trk input[type=range]{width:64px}
   #rollHelp{display:none}
   #rollWrap{height:72vh}
+  .en{display:none}
 }
 </style>
 </head>
 <body>
 <header>
-  <h1>🎤 こえボカロ</h1>
+  <h1>こえボカロ <span class="heart">♡</span></h1>
+  <span class="en">VOICE · SONG</span>
   <nav>
     <button class="tab on" data-tab="voice">① 声をつくる</button>
     <button class="tab" data-tab="song">② 曲をつくる</button>
@@ -120,7 +154,7 @@ button,select,input{touch-action:manipulation}
         <button id="btnExpVoice">💾 声をファイルに保存</button>
         <button id="btnImpVoice">📂 声のファイルをひらく</button>
         <button id="btnClrVoice" class="warn">ぜんぶけす</button>
-        <input type="file" id="fileVoice" accept=".json" hidden>
+        <input type="file" id="fileVoice" hidden>
       </div>
     </div>
   </div>
@@ -133,7 +167,7 @@ button,select,input{touch-action:manipulation}
     <button id="btnUndo">↩ もどす</button>
     <span class="sep"></span>
     <label>テンポ <input type="number" id="bpm" min="40" max="240" value="110"></label>
-    <label>小節 <input type="number" id="bars" min="1" max="64" value="8"></label>
+    <label>小節 <input type="number" id="bars" min="1" max="256" value="8"></label>
     <label>音符
       <select id="snap">
         <option value="1">16分</option>
@@ -160,16 +194,33 @@ button,select,input{touch-action:manipulation}
     <button id="btnDelNote" class="warn" disabled>🗑 この音符をけす</button>
     <span class="small" id="rollHelp">タップ：音符をおく ／ ドラッグ：うごかす・のばす ／ 右はし：長さ ／ 上の目もり：再生する場所 ／ ✋にすると指でスクロール</span>
   </div>
-  <div id="rollWrap"><canvas id="roll"></canvas><div id="playLine"></div></div>
+  <div id="rollWrap"><div id="rollSpace"><canvas id="roll"></canvas><div id="playLine"></div></div></div>
   <div id="songMsg" class="msg"></div>
   <div class="row">
     <button id="btnSaveSong">💾 曲を保存</button>
     <button id="btnOpenSong">📂 曲をひらく</button>
+    <button id="btnImport">📥 MIDI・楽譜をよみこむ</button>
     <button id="btnDemo">🎼 サンプル曲</button>
     <button id="btnClrSong" class="warn">ぜんぶけす</button>
-    <input type="file" id="fileSong" accept=".json" hidden>
+    <input type="file" id="fileSong" hidden>
+    <input type="file" id="fileImport" hidden>
   </div>
 </section>
+
+<div id="importDlg" class="dlg" hidden>
+  <div class="card dlgCard">
+    <h2 class="dlgTitle">📥 よみこみ</h2>
+    <div class="small" id="impFile"></div>
+    <div id="impList"></div>
+    <label class="row"><input type="checkbox" id="impTempo" checked> <span id="impTempoLabel">テンポも読みこむ</span></label>
+    <div class="small">いまの曲は入れかわります（「↩ もどす」で音符はもどせます）</div>
+    <div class="msg" id="impMsg"></div>
+    <div class="row" style="justify-content:flex-end">
+      <button id="impCancel">やめる</button>
+      <button id="impOk" class="on">読みこむ</button>
+    </div>
+  </div>
+</div>
 
 <script>
 'use strict';
@@ -557,7 +608,7 @@ function refreshGrid(){
     b.classList.toggle('sel', b.dataset.m === selMora);
   });
   const n = ORDER.filter(m => voices[m]).length;
-  $('voiceCount').textContent = `録音ずみ ${n} / ${ORDER.length}`;
+  $('voiceCount').innerHTML = `録音ずみ <b>${n}</b> / ${ORDER.length}`;
 }
 function selectMora(m){
   selMora = m; $('bigMora').textContent = m;
@@ -568,13 +619,13 @@ function drawWave(){
   const cv = $('wave'), c = cv.getContext('2d'), W = cv.width, H = cv.height;
   c.clearRect(0, 0, W, H);
   const S = voices[selMora];
-  if (!S){ c.fillStyle = '#b9aea4'; c.font = '28px sans-serif'; c.textAlign = 'center'; c.fillText('まだ録音していません', W / 2, H / 2 + 10); $('vinfo').textContent = ''; return; }
+  if (!S){ c.fillStyle = '#a99fc7'; c.font = `700 28px ${UI_FONT}`; c.textAlign = 'center'; c.fillText('まだ録音していません', W / 2, H / 2 + 10); $('vinfo').textContent = ''; return; }
   const x = S.raw, n = x.length;
   if (S.ok){
-    c.fillStyle = '#e3f6f3'; c.fillRect(S.ls / n * W, 0, (S.ve - S.ls) / n * W, H);
-    c.fillStyle = '#ffe3ea'; c.fillRect(0, 0, S.vs / n * W, H);
+    c.fillStyle = '#e4dcff'; c.fillRect(S.ls / n * W, 0, (S.ve - S.ls) / n * W, H);
+    c.fillStyle = '#ffd6ea'; c.fillRect(0, 0, S.vs / n * W, H);
   }
-  c.strokeStyle = '#18b7a8'; c.lineWidth = 1.5; c.beginPath();
+  c.strokeStyle = '#16121f'; c.lineWidth = 1.5; c.beginPath();
   for (let px = 0; px < W; px++){
     const a = Math.floor(px / W * n), b = Math.floor((px + 1) / W * n); let mn = 0, mx = 0;
     for (let i = a; i < b; i++){ if (x[i] < mn) mn = x[i]; if (x[i] > mx) mx = x[i]; }
@@ -683,7 +734,9 @@ $('btnImpVoice').onclick = () => $('fileVoice').click();
 $('fileVoice').onchange = async e => {
   const f = e.target.files[0]; e.target.value = ''; if (!f) return;
   try {
-    const data = JSON.parse(await f.text());
+    let data;
+    try { data = JSON.parse(await f.text()); } catch (er){ setRecMsg('このファイルはよみこめません（声のファイル koe-vocalo-voice.json をえらんでください）'); return; }
+    if (data.kind === 'song'){ setRecMsg('これは曲のファイルです。「② 曲をつくる」の「曲をひらく」からひらいてください'); return; }
     if (data.kind !== 'voices') throw new Error('kind');
     const ks = Object.keys(data.voices);
     for (let i = 0; i < ks.length; i++){
@@ -702,10 +755,10 @@ document.addEventListener('keydown', e => {
 
 // ========== ② 曲をつくる ==========
 const TRACKS = [
-  { id: 'vocal', name: '🎤 うた', col: '#18b7a8' },
-  { id: 'piano', name: '🎹 ピアノ', col: '#ff8c42' },
-  { id: 'bass', name: '🎸 ベース', col: '#7b6cf6' },
-  { id: 'drum', name: '🥁 ドラム', col: '#ef476f' }
+  { id: 'vocal', name: '🎤 うた', col: '#ff4fa3', ink: '#fff' },
+  { id: 'piano', name: '🎹 ピアノ', col: '#7b5cff', ink: '#fff' },
+  { id: 'bass', name: '🎸 ベース', col: '#2fd6b5', ink: '#16121f' },
+  { id: 'drum', name: '🥁 ドラム', col: '#ffc93c', ink: '#16121f' }
 ];
 const DRUMS = ['キック', 'スネア', 'ハイハット', 'オープンHH', 'クラップ', 'タム'];
 function emptyProject(){
@@ -869,7 +922,7 @@ function previewNote(track, p, n){
 // ----- ピアノロール -----
 const roll = $('roll'), rc = roll.getContext('2d'), wrap = $('rollWrap'), playLine = $('playLine');
 const COARSE = window.matchMedia && matchMedia('(pointer: coarse)').matches;
-const KW = 64, RUL = COARSE ? 30 : 24, CW = COARSE ? 30 : 22, RH = COARSE ? 26 : 18, PMIN = 36, PMAX = 84;
+const KW = 64, RUL = COARSE ? 30 : 24, CW = COARSE ? 30 : 22, RH = COARSE ? 26 : 18, PMIN = 36, PMAX = 96;
 let curTrack = 'vocal', sel = null, eraser = false, playStart = 0, snapV = 2, dpr = 1, drag = null;
 let panMode = false, tap = null;
 const nRows = () => curTrack === 'drum' ? DRUMS.length : PMAX - PMIN + 1;
@@ -878,75 +931,92 @@ const pOfRow = r => curTrack === 'drum' ? r : PMAX - r;
 const ticks = () => PJ.bars * 16;
 const isBlack = p => [1, 3, 6, 8, 10].includes(((p % 12) + 12) % 12);
 const trackCol = id => TRACKS.find(t => t.id === id).col;
+const trackInk = id => TRACKS.find(t => t.id === id).ink || '#fff';
+const UI_FONT = '"Zen Kaku Gothic New","Hiragino Sans","Yu Gothic UI","Meiryo",sans-serif';
+const NUM_FONT = '"Outfit",' + UI_FONT;
+// ピアノロールの色（デザインはここでまとめて変える）
+const THEME = { bg: '#ffffff', rowW: '#ffffff', rowB: '#f6f2ff', octLine: '#cfc3ff', barLine: '#16121f', beatLine: '#cfc6ea', subLine: '#eee9fb',
+  panel: '#f3efff', line: '#16121f', text: '#16121f', sub: '#7b5cff', play: '#ff4fa3', selRing: '#16121f', keyW: '#ffffff', keyW2: '#faf7ff', keyB: '#16121f', noteEdge: '#16121f' };
 
 function sizeRoll(){
   const w = KW + ticks() * CW, h = RUL + nRows() * RH;
-  dpr = Math.max(1, Math.min(window.devicePixelRatio || 1, 16000 / w, 16000 / h));
-  roll.width = Math.floor(w * dpr); roll.height = Math.floor(h * dpr);
-  roll.style.width = w + 'px'; roll.style.height = h + 'px';
+  $('rollSpace').style.width = w + 'px'; $('rollSpace').style.height = h + 'px';
   playLine.style.height = h + 'px';
+  const cw = Math.max(1, Math.min(w, wrap.clientWidth)), ch = Math.max(1, Math.min(h, wrap.clientHeight));
+  dpr = window.devicePixelRatio || 1;
+  roll.width = Math.floor(cw * dpr); roll.height = Math.floor(ch * dpr);
+  roll.style.width = cw + 'px'; roll.style.height = ch + 'px';
   drawRoll();
 }
 let drawQueued = false;
 function queueDraw(){ if (!drawQueued){ drawQueued = true; requestAnimationFrame(() => { drawQueued = false; drawRoll(); }); } }
-function rr(c, x, y, w, h, r){ c.beginPath(); c.moveTo(x + r, y); c.arcTo(x + w, y, x + w, y + h, r); c.arcTo(x + w, y + h, x, y + h, r); c.arcTo(x, y + h, x, y, r); c.arcTo(x, y, x + w, y, r); c.closePath(); }
+function rr(c, x, y, w, h, r){ r = Math.min(r, h / 2, w / 2); c.beginPath(); c.moveTo(x + r, y); c.arcTo(x + w, y, x + w, y + h, r); c.arcTo(x + w, y + h, x, y + h, r); c.arcTo(x, y + h, x, y, r); c.arcTo(x, y, x + w, y, r); c.closePath(); }
+// 見えている所だけをかく（長い曲でも軽い）
 function drawRoll(){
-  const c = rc, W = KW + ticks() * CW, H = RUL + nRows() * RH, sl = wrap.scrollLeft, st = wrap.scrollTop;
-  c.setTransform(dpr, 0, 0, dpr, 0, 0);
-  c.clearRect(0, 0, W, H);
-  for (let r = 0; r < nRows(); r++){
+  const c = rc, TH = THEME, W = KW + ticks() * CW, H = RUL + nRows() * RH;
+  const sl = wrap.scrollLeft, st = wrap.scrollTop, vw = roll.width / dpr, vh = roll.height / dpr;
+  c.setTransform(dpr, 0, 0, dpr, -sl * dpr, -st * dpr);
+  c.fillStyle = TH.bg; c.fillRect(sl, st, vw, vh);
+  const r0 = Math.max(0, Math.floor((st - RUL) / RH)), r1 = Math.min(nRows() - 1, Math.ceil((st + vh - RUL) / RH));
+  const t0 = Math.max(0, Math.floor((sl - KW) / CW)), t1 = Math.min(ticks(), Math.ceil((sl + vw - KW) / CW));
+  const gx0 = Math.max(KW, sl), gx1 = Math.min(W, sl + vw);
+  for (let r = r0; r <= r1; r++){
     const y = RUL + r * RH, p = pOfRow(r);
-    c.fillStyle = curTrack === 'drum' ? (r % 2 ? '#fbf7f2' : '#fff') : (isBlack(p) ? '#f1ece6' : '#fffdfa');
-    c.fillRect(KW, y, W - KW, RH);
-    if (curTrack !== 'drum' && p % 12 === 0){ c.fillStyle = '#d8cfc4'; c.fillRect(KW, y + RH - 1, W - KW, 1); }
+    c.fillStyle = curTrack === 'drum' ? (r % 2 ? TH.rowB : TH.rowW) : (isBlack(p) ? TH.rowB : TH.rowW);
+    c.fillRect(gx0, y, gx1 - gx0, RH);
+    if (curTrack !== 'drum' && p % 12 === 0){ c.fillStyle = TH.octLine; c.fillRect(gx0, y + RH - 1, gx1 - gx0, 1); }
   }
-  for (let t = 0; t <= ticks(); t++){
+  for (let t = t0; t <= t1; t++){
     let col = null;
-    if (t % 16 === 0) col = '#9b8f82'; else if (t % 4 === 0) col = '#d3c9be'; else if (t % snapV === 0) col = '#eee7de';
-    if (col){ c.fillStyle = col; c.fillRect(KW + t * CW, RUL, t % 16 === 0 ? 2 : 1, H - RUL); }
+    if (t % 16 === 0) col = TH.barLine; else if (t % 4 === 0) col = TH.beatLine; else if (t % snapV === 0) col = TH.subLine;
+    if (col){ c.fillStyle = col; c.fillRect(KW + t * CW, Math.max(RUL, st), t % 16 === 0 ? 2 : 1, vh); }
   }
+  const vis = n => n.s <= t1 && n.s + n.l >= t0;
   if (curTrack !== 'drum'){
     ['vocal', 'piano', 'bass'].filter(id => id !== curTrack).forEach(id => {
-      c.fillStyle = trackCol(id) + '30';
-      PJ.tracks[id].forEach(n => { const r = rowOf(n.p); if (r < 0 || r >= nRows()) return; c.fillRect(KW + n.s * CW + 1, RUL + r * RH + 3, n.l * CW - 2, RH - 6); });
+      c.fillStyle = trackCol(id) + '38';
+      PJ.tracks[id].forEach(n => { if (!vis(n)) return; const r = rowOf(n.p); if (r < r0 || r > r1) return; rr(c, KW + n.s * CW + 1, RUL + r * RH + 4, n.l * CW - 2, RH - 8, 99); c.fill(); });
     });
   }
-  const col = trackCol(curTrack);
-  c.font = 'bold 12px sans-serif'; c.textBaseline = 'middle';
+  const col = trackCol(curTrack), ink = trackInk(curTrack);
+  c.font = `bold ${COARSE ? 13 : 12}px ${UI_FONT}`; c.textBaseline = 'middle';
   PJ.tracks[curTrack].forEach(n => {
-    const r = rowOf(n.p); if (r < 0 || r >= nRows()) return;
-    const x = KW + n.s * CW + 1, y = RUL + r * RH + 1, w = n.l * CW - 2, h = RH - 2;
+    if (!vis(n)) return;
+    const r = rowOf(n.p); if (r < r0 || r > r1) return;
+    const x = KW + n.s * CW + 1, y = RUL + r * RH + 2, w = n.l * CW - 2, h = RH - 4;
     const miss = curTrack === 'vocal' && !['ー', 'っ'].includes(normLyric(n.lyric)) && !voices[normLyric(n.lyric)];
-    c.globalAlpha = miss ? 0.6 : 1; c.fillStyle = col; rr(c, x, y, w, h, 4); c.fill(); c.globalAlpha = 1;
-    if (miss){ c.setLineDash([3, 2]); c.strokeStyle = '#0b6e65'; c.lineWidth = 1; rr(c, x, y, w, h, 4); c.stroke(); c.setLineDash([]); }
-    c.fillStyle = 'rgba(0,0,0,.18)'; c.fillRect(x + w - 4, y + 2, 2, h - 4);
-    if (n === sel){ c.strokeStyle = '#3b3330'; c.lineWidth = 2; rr(c, x, y, w, h, 4); c.stroke(); }
-    if (curTrack === 'vocal'){ c.fillStyle = '#fff'; c.fillText(n.lyric || '', x + 4, y + h / 2 + 1); }
+    if (n === sel){ c.fillStyle = TH.selRing; rr(c, x + 3, y + 3, w, h, 99); c.fill(); }
+    c.globalAlpha = miss ? 0.72 : 1; c.fillStyle = col; rr(c, x, y, w, h, 99); c.fill(); c.globalAlpha = 1;
+    if (!miss){ c.strokeStyle = TH.noteEdge; c.lineWidth = 1.5; rr(c, x, y, w, h, 99); c.stroke(); }
+    if (miss){ c.setLineDash([3, 2]); c.strokeStyle = TH.noteEdge; c.lineWidth = 1.5; rr(c, x, y, w, h, 99); c.stroke(); c.setLineDash([]); }
+    if (n === sel){ c.strokeStyle = TH.selRing; c.lineWidth = 3; rr(c, x, y, w, h, 99); c.stroke(); }
+    if (curTrack === 'vocal'){ c.fillStyle = miss ? TH.text : ink; c.fillText(n.lyric || '', x + 6, y + h / 2 + 1); }
   });
   // 上の目もり
-  c.fillStyle = '#f6efe7'; c.fillRect(sl, st, W - sl, RUL);
-  c.fillStyle = '#6d625a'; c.font = '12px sans-serif'; c.textBaseline = 'middle';
-  for (let b = 0; b < PJ.bars; b++){ const x = KW + b * 16 * CW; c.fillRect(x, st, 1, RUL); c.fillText(String(b + 1), x + 4, st + RUL / 2); }
-  const px = KW + playStart * CW; c.fillStyle = '#ff3b6b'; c.beginPath(); c.moveTo(px - 6, st + 4); c.lineTo(px + 6, st + 4); c.lineTo(px, st + RUL - 2); c.fill();
+  c.fillStyle = TH.panel; c.fillRect(sl, st, vw, RUL);
+  c.fillStyle = TH.text; c.font = `800 12px ${NUM_FONT}`;
+  for (let b = Math.floor(t0 / 16); b <= Math.min(PJ.bars - 1, Math.ceil(t1 / 16)); b++){ const x = KW + b * 16 * CW; c.fillRect(x, st + RUL - 8, 1, 8); c.fillText(String(b + 1), x + 5, st + RUL / 2); }
+  const px = KW + playStart * CW; c.fillStyle = TH.play; c.beginPath(); c.moveTo(px - 6, st + 4); c.lineTo(px + 6, st + 4); c.lineTo(px, st + RUL - 3); c.fill();
+  c.fillStyle = TH.line; c.fillRect(sl, st + RUL - 2, vw, 2);
   // けんばん
-  for (let r = 0; r < nRows(); r++){
+  c.font = `700 11px ${UI_FONT}`;
+  for (let r = r0; r <= r1; r++){
     const y = RUL + r * RH, p = pOfRow(r);
-    if (y + RH < st || y > st + wrap.clientHeight + RH) continue;
-    if (curTrack === 'drum'){ c.fillStyle = r % 2 ? '#fde3e9' : '#fff0f3'; c.fillRect(sl, y, KW, RH); c.fillStyle = '#7a3448'; c.fillText(DRUMS[r], sl + 4, y + RH / 2); }
+    if (curTrack === 'drum'){ c.fillStyle = r % 2 ? TH.keyW2 : TH.keyW; c.fillRect(sl, y, KW, RH); c.fillStyle = TH.text; c.fillText(DRUMS[r], sl + 6, y + RH / 2); }
     else {
-      c.fillStyle = isBlack(p) ? '#4a423d' : '#fff'; c.fillRect(sl, y, KW, RH);
-      c.fillStyle = '#e4dbd1'; c.fillRect(sl, y + RH - 1, KW, 1);
-      if (p % 12 === 0){ c.fillStyle = '#3b3330'; c.fillText(noteName(p), sl + 6, y + RH / 2); }
+      c.fillStyle = isBlack(p) ? TH.keyB : TH.keyW; c.fillRect(sl, y, KW, RH);
+      c.fillStyle = TH.line; c.fillRect(sl, y + RH - 1, KW, 1);
+      if (p % 12 === 0){ c.fillStyle = TH.text; c.fillText(noteName(p), sl + 8, y + RH / 2); }
     }
   }
-  c.fillStyle = '#e4dbd1'; c.fillRect(sl + KW - 1, st, 1, H);
-  c.fillStyle = '#f6efe7'; c.fillRect(sl, st, KW, RUL);
+  c.fillStyle = TH.line; c.fillRect(sl + KW - 2, st, 2, vh);
+  c.fillStyle = TH.panel; c.fillRect(sl, st, KW, RUL);
   updateSelBar();
 }
 wrap.addEventListener('scroll', queueDraw);
-window.addEventListener('resize', queueDraw);
+window.addEventListener('resize', () => { if ($('song').classList.contains('on')) sizeRoll(); });
 
-function ptOf(e){ const b = roll.getBoundingClientRect(); return { x: e.clientX - b.left, y: e.clientY - b.top }; }
+function ptOf(e){ const b = roll.getBoundingClientRect(); return { x: e.clientX - b.left + wrap.scrollLeft, y: e.clientY - b.top + wrap.scrollTop }; }
 function hitAt(x, y){
   const r = Math.floor((y - RUL) / RH), tk = (x - KW) / CW;
   return PJ.tracks[curTrack].find(n => rowOf(n.p) === r && tk >= n.s && tk < n.s + n.l);
@@ -1062,7 +1132,7 @@ function buildTrackBar(){
     d.innerHTML = `<button data-t="${t.id}">${t.name}</button>
       <input type="range" min="0" max="1" step="0.05" value="${PJ.vol[t.id]}" title="音量">
       <label><input type="checkbox" ${PJ.mute[t.id] ? 'checked' : ''}> 消音</label>`;
-    const b = d.querySelector('button'); b.style.borderColor = t.col;
+    const b = d.querySelector('button');
     b.onclick = () => selectTrack(t.id);
     d.querySelector('input[type=range]').oninput = e => { PJ.vol[t.id] = +e.target.value; saveLocal(); };
     d.querySelector('input[type=checkbox]').onchange = e => { PJ.mute[t.id] = e.target.checked; saveLocal(); };
@@ -1073,7 +1143,7 @@ function buildTrackBar(){
 function updateTrackButtons(){
   document.querySelectorAll('#trackBar button').forEach(b => {
     const on = b.dataset.t === curTrack, col = trackCol(b.dataset.t);
-    b.style.background = on ? col : '#fff'; b.style.color = on ? '#fff' : '#3b3330';
+    b.style.background = on ? col : '#fff'; b.style.color = on ? trackInk(b.dataset.t) : '#16121f';
   });
   $('vocalBar').style.display = curTrack === 'vocal' ? '' : 'none';
 }
@@ -1089,7 +1159,7 @@ function applyProjectToUI(){
 }
 $('bpm').onchange = e => { PJ.bpm = Math.max(40, Math.min(240, +e.target.value || 110)); e.target.value = PJ.bpm; saveLocal(); };
 $('bars').onchange = e => {
-  const nb = Math.max(1, Math.min(64, Math.round(+e.target.value) || 8));
+  const nb = Math.max(1, Math.min(256, Math.round(+e.target.value) || 8));
   pushUndo(snapTracks());
   PJ.bars = nb; e.target.value = nb;
   for (const k in PJ.tracks) PJ.tracks[k] = PJ.tracks[k].filter(n => n.s < ticks()).map(n => (n.l = Math.min(n.l, ticks() - n.s), n));
@@ -1187,6 +1257,264 @@ $('btnClrSong').onclick = () => {
   pushUndo(snapTracks()); PJ.tracks = { vocal: [], piano: [], bass: [], drum: [] }; saveLocal(); drawRoll();
 };
 
+
+// ========== MIDI・MusicXML よみこみ ==========
+const GM_DRUM = { 35: 0, 36: 0, 37: 1, 38: 1, 40: 1, 42: 2, 44: 2, 46: 3, 49: 3, 51: 3, 52: 3, 55: 3, 57: 3, 59: 3, 39: 4, 54: 4, 41: 5, 43: 5, 45: 5, 47: 5, 48: 5, 50: 5 };
+function decodeText(bytes){
+  try { return new TextDecoder('utf-8', { fatal: true }).decode(bytes); }
+  catch (e){ try { return new TextDecoder('shift_jis').decode(bytes); } catch (e2){ return ''; } }
+}
+function readMidi(buf){
+  const d = new DataView(buf); let p = 0;
+  const str = n => { let s = ''; for (let i = 0; i < n; i++) s += String.fromCharCode(d.getUint8(p + i)); p += n; return s; };
+  const u32 = () => { const v = d.getUint32(p); p += 4; return v; }, u16 = () => { const v = d.getUint16(p); p += 2; return v; };
+  if (str(4) !== 'MThd') throw new Error('notmidi');
+  const hl = u32(); u16(); const ntr = u16(), div = u16(); p = 8 + hl;
+  if (div & 0x8000) throw new Error('smpte');
+  const vlq = () => { let v = 0, b; do { b = d.getUint8(p++); v = (v << 7) | (b & 0x7f); } while (b & 0x80); return v; };
+  const tracks = []; let tempo = null;
+  for (let t = 0; t < ntr && p + 8 <= buf.byteLength; t++){
+    const id = str(4), len = u32(), end = Math.min(buf.byteLength, p + len);
+    if (id !== 'MTrk'){ p = end; continue; }
+    let tick = 0, run = 0; const open = {};
+    const tr = { name: '', notes: [], lyr: [], txt: [] };
+    try {
+      while (p < end){
+        tick += vlq();
+        let st = d.getUint8(p);
+        if (st < 0x80) st = run; else { p++; if (st < 0xF0) run = st; }
+        if (st === 0xFF){
+          const type = d.getUint8(p++), l = vlq(), bytes = new Uint8Array(buf, p, l); p += l;
+          if (type === 0x03 && !tr.name) tr.name = decodeText(bytes);
+          else if (type === 0x05) tr.lyr.push({ tick, text: decodeText(bytes) });
+          else if (type === 0x01 && tick > 0) tr.txt.push({ tick, text: decodeText(bytes) });
+          else if (type === 0x51 && tempo == null) tempo = 60000000 / ((bytes[0] << 16) | (bytes[1] << 8) | bytes[2]);
+          else if (type === 0x2F) break;
+        } else if (st === 0xF0 || st === 0xF7){ p += vlq(); }
+        else {
+          const hi = st & 0xF0, ch = st & 0x0F;
+          if (hi === 0xC0 || hi === 0xD0) p += 1;
+          else {
+            const a = d.getUint8(p), b = d.getUint8(p + 1); p += 2;
+            const k = ch * 128 + a;
+            if (hi === 0x90 && b > 0) (open[k] = open[k] || []).push(tick);
+            else if (hi === 0x80 || (hi === 0x90 && b === 0)){ const q = open[k]; if (q && q.length) tr.notes.push({ t0: q.shift(), t1: tick, p: a, ch }); }
+          }
+        }
+      }
+    } catch (e) { /* こわれた所はとばす */ }
+    p = end; tracks.push(tr);
+  }
+  // トラック×チャンネルごとに分ける
+  const q16 = div / 4, items = [];
+  tracks.forEach((tr, ti) => {
+    const lyr = tr.lyr.length ? tr.lyr : tr.txt;
+    const byCh = {};
+    tr.notes.forEach(n => (byCh[n.ch] = byCh[n.ch] || []).push(n));
+    const chs = Object.keys(byCh).map(Number).sort((a, b) => byCh[b].length - byCh[a].length);
+    chs.forEach((ch, ci) => {
+      const ns = byCh[ch].sort((a, b) => a.t0 - b.t0);
+      if (ci === 0 && lyr.length){
+        lyr.forEach(L => {
+          let best = null, bd = q16 / 2 + 1;
+          for (const n of ns){ const dd = Math.abs(n.t0 - L.tick); if (dd < bd){ bd = dd; best = n; } if (n.t0 > L.tick + q16) break; }
+          if (best && !best.lyric) best.lyric = L.text;
+        });
+      }
+      items.push({
+        name: (tr.name || `トラック${ti + 1}`) + (chs.length > 1 ? ` ch${ch + 1}` : ''),
+        drum: ch === 9,
+        notes: ns.map(n => { const s = Math.round(n.t0 / q16); return { s, l: Math.max(1, Math.round(n.t1 / q16) - s), p: n.p, lyric: n.lyric }; })
+      });
+    });
+  });
+  return { tempo, items };
+}
+async function unzipFirstXml(buf){
+  const d = new DataView(buf), u8 = new Uint8Array(buf);
+  let e = -1;
+  for (let i = buf.byteLength - 22; i >= Math.max(0, buf.byteLength - 65557); i--) if (d.getUint32(i, true) === 0x06054b50){ e = i; break; }
+  if (e < 0) throw new Error('zip');
+  const n = d.getUint16(e + 10, true); let cd = d.getUint32(e + 16, true); const files = {};
+  for (let i = 0; i < n; i++){
+    const method = d.getUint16(cd + 10, true), csize = d.getUint32(cd + 20, true);
+    const nl = d.getUint16(cd + 28, true), xl = d.getUint16(cd + 30, true), cl = d.getUint16(cd + 32, true), off = d.getUint32(cd + 42, true);
+    files[new TextDecoder().decode(u8.subarray(cd + 46, cd + 46 + nl))] = { method, csize, off };
+    cd += 46 + nl + xl + cl;
+  }
+  const read = async name => {
+    const f = files[name]; if (!f) return null;
+    const lnl = d.getUint16(f.off + 26, true), lxl = d.getUint16(f.off + 28, true), st = f.off + 30 + lnl + lxl;
+    const data = u8.subarray(st, st + f.csize);
+    if (f.method === 0) return new TextDecoder().decode(data);
+    const out = await new Response(new Blob([data]).stream().pipeThrough(new DecompressionStream('deflate-raw'))).arrayBuffer();
+    return new TextDecoder().decode(out);
+  };
+  let root = null; const cont = await read('META-INF/container.xml');
+  if (cont){ const m = cont.match(/full-path="([^"]+)"/); if (m) root = m[1]; }
+  if (!root) root = Object.keys(files).find(k => /\.(xml|musicxml)$/i.test(k) && !k.startsWith('META-INF'));
+  return read(root);
+}
+function readMusicXML(text){
+  const doc = new DOMParser().parseFromString(text, 'application/xml');
+  if (doc.getElementsByTagName('parsererror').length) throw new Error('xml');
+  if (doc.documentElement.nodeName !== 'score-partwise') throw new Error('timewise');
+  const STEP = { C: 0, D: 2, E: 4, F: 5, G: 7, A: 9, B: 11 };
+  const kid = (el, name) => { for (const c of el.children) if (c.nodeName === name) return c; return null; };
+  const kids = (el, name) => [...el.children].filter(c => c.nodeName === name);
+  const num = el => el ? +el.textContent || 0 : 0;
+  const names = {};
+  doc.querySelectorAll('score-part').forEach(sp => { const pn = sp.getElementsByTagName('part-name')[0]; names[sp.getAttribute('id')] = pn ? pn.textContent.trim() : ''; });
+  let tempo = null; const items = [];
+  kids(doc.documentElement, 'part').forEach(part => {
+    const id = part.getAttribute('id'); let div = 1, mStart = 0; const notes = [], tieOpen = {}; let unp = 0;
+    for (const m of kids(part, 'measure')){
+      let cur = 0, maxc = 0, lastStart = 0;
+      for (const el of m.children){
+        const nn = el.nodeName;
+        if (nn === 'attributes'){ const dv = el.getElementsByTagName('divisions')[0]; if (dv) div = num(dv) || div; }
+        else if (nn === 'direction' || nn === 'sound'){
+          if (tempo == null){
+            const snd = nn === 'sound' ? el : el.getElementsByTagName('sound')[0];
+            if (snd && snd.getAttribute('tempo')) tempo = +snd.getAttribute('tempo');
+            else { const pm = el.getElementsByTagName('per-minute')[0]; if (pm && +pm.textContent) tempo = +pm.textContent; }
+          }
+        }
+        else if (nn === 'backup') cur -= num(kid(el, 'duration'));
+        else if (nn === 'forward'){ cur += num(kid(el, 'duration')); maxc = Math.max(maxc, cur); }
+        else if (nn === 'note'){
+          if (kid(el, 'grace') || kid(el, 'cue')) continue;
+          const dur = num(kid(el, 'duration')), chord = !!kid(el, 'chord');
+          const start = chord ? lastStart : cur;
+          if (!chord){ lastStart = cur; cur += dur; maxc = Math.max(maxc, cur); }
+          if (kid(el, 'rest')) continue;
+          const pi = kid(el, 'pitch'); if (!pi){ unp++; continue; }
+          const midi = 12 * (num(kid(pi, 'octave')) + 1) + STEP[(kid(pi, 'step') || { textContent: 'C' }).textContent.trim()] + Math.round(num(kid(pi, 'alter')));
+          const q0 = mStart + start / div, q1 = q0 + dur / div;
+          const ties = kids(el, 'tie').map(t => t.getAttribute('type'));
+          if (ties.includes('stop') && tieOpen[midi]){ tieOpen[midi].q1 = q1; if (!ties.includes('start')) delete tieOpen[midi]; continue; }
+          const n = { q0, q1, p: midi }; notes.push(n);
+          if (ties.includes('start')) tieOpen[midi] = n;
+          const ly = kid(el, 'lyric');
+          if (ly){ const tx = ly.getElementsByTagName('text')[0]; if (tx) n.lyric = tx.textContent.trim(); }
+        }
+      }
+      mStart += maxc / div;
+    }
+    const nm = names[id] || id;
+    items.push({ name: nm, drum: false, unpitched: unp,
+      notes: notes.map(n => { const s = Math.round(n.q0 * 4); return { s, l: Math.max(1, Math.round(n.q1 * 4) - s), p: n.p, lyric: n.lyric }; }) });
+  });
+  return { tempo, items };
+}
+const isKanaMora = c => /^[ぁ-ゖー]+$/.test(c);
+function guessAssign(items){
+  const avg = it => it.notes.reduce((a, n) => a + n.p, 0) / Math.max(1, it.notes.length);
+  const as = items.map(it => it.drum ? 'drum' : 'piano');
+  const mel = items.map((it, i) => i).filter(i => !items[i].drum && items[i].notes.length);
+  const lyr = mel.filter(i => items[i].notes.some(n => n.lyric));
+  let v = lyr.length ? lyr.sort((a, b) => items[b].notes.length - items[a].notes.length)[0]
+    : mel.slice().sort((a, b) => avg(items[b]) - avg(items[a]))[0];
+  if (v != null) as[v] = 'vocal';
+  const rest = mel.filter(i => i !== v).sort((a, b) => avg(items[a]) - avg(items[b]));
+  if (rest.length && avg(items[rest[0]]) < 52) as[rest[0]] = 'bass';
+  return as;
+}
+let impModel = null;
+function openImportDialog(model, fname){
+  impModel = model;
+  model.items = model.items.filter(it => it.notes.length);
+  if (!model.items.length){ setSongMsg('音符が見つかりませんでした'); return; }
+  const as = guessAssign(model.items);
+  $('impFile').textContent = fname;
+  const L = $('impList'); L.innerHTML = '';
+  model.items.forEach((it, i) => {
+    const lo = Math.min(...it.notes.map(n => n.p)), hi = Math.max(...it.notes.map(n => n.p));
+    const row = document.createElement('div'); row.className = 'impRow';
+    const nm = document.createElement('div'); nm.className = 'nm';
+    const b = document.createElement('b'); b.textContent = it.name;
+    const sm = document.createElement('span'); sm.className = 'small';
+    sm.textContent = `${it.notes.length}音 ・ ${it.drum ? 'ドラム' : noteName(lo) + '〜' + noteName(hi)}${it.notes.some(n => n.lyric) ? ' ・ 歌詞あり' : ''}`;
+    nm.append(b, sm);
+    const sel = document.createElement('select'); sel.dataset.i = i;
+    [['vocal', '🎤 うた'], ['piano', '🎹 ピアノ'], ['bass', '🎸 ベース'], ['drum', '🥁 ドラム'], ['none', 'つかわない']].forEach(([v, t]) => {
+      const o = document.createElement('option'); o.value = v; o.textContent = t; if (v === as[i]) o.selected = true; sel.appendChild(o);
+    });
+    row.append(nm, sel); L.appendChild(row);
+  });
+  const t = model.tempo ? Math.round(model.tempo) : null;
+  $('impTempo').checked = !!t; $('impTempo').disabled = !t;
+  $('impTempoLabel').textContent = t ? `テンポも読みこむ（${t}）` : 'テンポの情報はありません';
+  $('impMsg').textContent = '';
+  $('importDlg').hidden = false;
+}
+function applyImport(){
+  const assign = [...$('impList').querySelectorAll('select')].map(s => s.value);
+  if (assign.filter(a => a === 'vocal').length > 1){ $('impMsg').textContent = '「うた」は1つだけにしてください'; return; }
+  const T = { vocal: [], piano: [], bass: [], drum: [] }; let maxEnd = 0, skipDrum = 0;
+  impModel.items.forEach((it, i) => {
+    const to = assign[i]; if (to === 'none') return;
+    it.notes.forEach(n => {
+      const o = { s: n.s, l: n.l, p: n.p };
+      if (to === 'drum'){ const r = it.drum ? GM_DRUM[n.p] : 1; if (r == null){ skipDrum++; return; } o.p = r; o.l = 1; }
+      else { while (o.p > PMAX) o.p -= 12; while (o.p < PMIN) o.p += 12; }
+      if (to === 'vocal') o.lyric = n.lyric || null;
+      T[to].push(o); maxEnd = Math.max(maxEnd, o.s + o.l);
+    });
+  });
+  // うたは1音ずつにする（重なりは上の音をのこす）
+  T.vocal.sort((a, b) => a.s - b.s || b.p - a.p);
+  const v = [];
+  for (const n of T.vocal){ const last = v[v.length - 1]; if (last && last.s === n.s) continue; if (last && last.s + last.l > n.s) last.l = n.s - last.s; v.push(n); }
+  const hasLy = v.some(n => n.lyric); let kanji = 0;
+  v.forEach((n, i) => {
+    if (n.lyric){
+      const m = toMorae(n.lyric.replace(/[\/\\^\-_]/g, '')).filter(isKanaMora);
+      if (m.length) n.lyric = m[0]; else { kanji++; n.lyric = 'ら'; }
+    } else {
+      const pr = v[i - 1];
+      n.lyric = (hasLy && pr && pr.s + pr.l === n.s) ? 'ー' : 'ら';
+    }
+  });
+  T.vocal = v;
+  pushUndo(snapTracks());
+  stopPlay();
+  PJ.tracks = T;
+  PJ.bars = Math.max(1, Math.min(256, Math.ceil(maxEnd / 16) || 8));
+  for (const k in PJ.tracks) PJ.tracks[k] = PJ.tracks[k].filter(n => n.s < ticks()).map(n => (n.l = Math.min(n.l, ticks() - n.s), n));
+  if ($('impTempo').checked && impModel.tempo) PJ.bpm = Math.max(40, Math.min(240, Math.round(impModel.tempo)));
+  PJ.lyric = v.map(n => n.lyric).filter(x => x !== 'ー').join('');
+  playStart = 0; saveLocal(); applyProjectToUI(); selectTrack(v.length ? 'vocal' : 'piano');
+  $('importDlg').hidden = true;
+  const notes = [];
+  if (maxEnd > 256 * 16) notes.push('長いので256小節までにしました');
+  if (kanji) notes.push(`漢字などの歌詞 ${kanji}こ は「ら」にしました`);
+  if (skipDrum) notes.push(`ドラムにない音 ${skipDrum}こ はとばしました`);
+  setSongMsg('読みこみました' + (notes.length ? '（' + notes.join('・') + '）' : ''));
+}
+$('btnImport').onclick = () => $('fileImport').click();
+$('fileImport').onchange = async e => {
+  const f = e.target.files[0]; e.target.value = ''; if (!f) return;
+  try {
+    const buf = await f.arrayBuffer(), h = new Uint8Array(buf.slice(0, 4));
+    const sig = String.fromCharCode(...h);
+    let model;
+    if (sig === 'MThd') model = readMidi(buf);
+    else if (sig.startsWith('PK')) model = readMusicXML(await unzipFirstXml(buf));
+    else {
+      const txt = new TextDecoder().decode(buf);
+      if (!txt.includes('<score-partwise')) throw new Error('unknown');
+      model = readMusicXML(txt);
+    }
+    openImportDialog(model, f.name);
+  } catch (err){
+    console.warn(err);
+    setSongMsg(err.message === 'timewise' ? 'この形式のMusicXMLはまだ読みこめません' : '読みこめませんでした。MIDI（.mid）か MusicXML（.musicxml / .mxl / .xml）をえらんでください');
+  }
+};
+$('impCancel').onclick = () => { $('importDlg').hidden = true; };
+$('impOk').onclick = applyImport;
+
 // ---------- はじめ ----------
 (async function init(){
   buildGrid();
@@ -1195,6 +1523,7 @@ $('btnClrSong').onclick = () => {
   applyProjectToUI();
   await loadVoices();
   refreshGrid(); selectMora('あ'); drawRoll();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { drawRoll(); drawWave(); });
 })();
 </script>
 </body>
