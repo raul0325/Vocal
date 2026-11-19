@@ -189,7 +189,7 @@ button,select,input{touch-action:manipulation}
   <div id="selBar">
     <button id="btnLyric" disabled>🔤 歌詞をかえる</button>
     <button id="btnDelNote" class="warn" disabled>🗑 この音符をけす</button>
-    <span class="small" id="rollHelp">長おし（マウスはクリック）：音符をおく ／ 指でなぞる：スクロール ／ 音符をドラッグ：うごかす ／ 右はし：長さ ／ 上の目もり：再生する場所</span>
+    <span class="small" id="rollHelp">長おし（マウスはクリック）：音符をおく ／ 音符を長おし：けす ／ 指でなぞる：スクロール ／ 音符をドラッグ：うごかす ／ 右はし：長さ ／ 上の目もり：再生する場所</span>
   </div>
   <div id="rollWrap"><div id="rollSpace"><canvas id="roll"></canvas><div id="playLine"></div></div></div>
   <div id="songMsg" class="msg"></div>
@@ -922,7 +922,7 @@ const COARSE = window.matchMedia && matchMedia('(pointer: coarse)').matches;
 const KW = 64, RUL = COARSE ? 30 : 24, CW = COARSE ? 30 : 22, RH = COARSE ? 26 : 18, PMIN = 36, PMAX = 96;
 let curTrack = 'vocal', sel = null, eraser = false, playStart = 0, snapV = 2, dpr = 1, drag = null;
 let press = null; // 指：長おしで音符をおく／なぞるとスクロール
-const LONG_MS = 380;
+const LONG_MS = 380, DEL_MS = 600;
 const nRows = () => curTrack === 'drum' ? DRUMS.length : PMAX - PMIN + 1;
 const rowOf = p => curTrack === 'drum' ? p : PMAX - p;
 const pOfRow = r => curTrack === 'drum' ? r : PMAX - r;
@@ -1039,6 +1039,19 @@ roll.addEventListener('pointerdown', e => {
     const edge = KW + (hit.s + hit.l) * CW;
     drag = (x > edge - 8 && hit.l * CW > 14) ? { mode: 'resize', n: hit, before } : { mode: 'move', n: hit, x0: x, y0: y, s0: hit.s, p0: hit.p, before };
     previewNote(curTrack, hit.p, hit);
+    if (e.pointerType === 'touch'){
+      // 指：音符を動かさずに長おしすると消す
+      const dr = drag, id = e.pointerId;
+      dr.cx = e.clientX; dr.cy = e.clientY; dr.still = true;
+      dr.timer = setTimeout(() => {
+        if (drag !== dr || !dr.still) return;
+        const a = PJ.tracks[curTrack], i = a.indexOf(hit); if (i >= 0) a.splice(i, 1);
+        if (sel === hit) sel = null;
+        dr.mode = 'none';
+        if (navigator.vibrate) try { navigator.vibrate([10, 40, 10]); } catch (er) {}
+        drawRoll();
+      }, DEL_MS);
+    }
   } else if (e.pointerType === 'touch'){
     // 指：すぐには置かない。長おしで置く／動かしたらスクロール
     const id = e.pointerId;
@@ -1072,6 +1085,10 @@ roll.addEventListener('pointermove', e => {
     return;
   }
   if (!drag) return;
+  if (drag.still){
+    if (Math.hypot(e.clientX - drag.cx, e.clientY - drag.cy) <= 8) return;  // まだ長おし中
+    drag.still = false; clearTimeout(drag.timer);
+  }
   const { x, y } = ptOf(e);
   if (drag.mode === 'erase') eraseAt(x, y);
   else if (drag.mode === 'resize'){
@@ -1085,7 +1102,7 @@ roll.addEventListener('pointermove', e => {
   }
   queueDraw();
 });
-function endDrag(){ if (!drag) return; if (snapTracks() !== drag.before){ pushUndo(drag.before); saveLocal(); } drag = null; drawRoll(); }
+function endDrag(){ if (!drag) return; clearTimeout(drag.timer); if (snapTracks() !== drag.before){ pushUndo(drag.before); saveLocal(); } drag = null; drawRoll(); }
 roll.addEventListener('pointerup', e => {
   if (press && press.id === e.pointerId){
     const pr = press; press = null; clearTimeout(pr.timer);
