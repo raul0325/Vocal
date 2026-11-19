@@ -77,9 +77,7 @@ summary{font-family:var(--logo);font-weight:400;font-size:16px;cursor:pointer;co
 #vocalBar input[type=range]{width:110px}
 #rollWrap{position:relative;overflow:auto;height:calc(100vh - 410px);min-height:300px;background:var(--paper);border-radius:18px;border:2px solid var(--line);box-shadow:4px 4px 0 var(--ink);
   touch-action:none;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
-#rollWrap.pan{touch-action:pan-x pan-y}
 button,select,input{touch-action:manipulation}
-#btnMode.pan{background:var(--yellow)}
 #selBar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:8px 0 10px}
 #rollSpace{position:relative}
 #roll{display:block;position:sticky;left:0;top:0}
@@ -176,7 +174,6 @@ button,select,input{touch-action:manipulation}
         <option value="8">2分</option>
       </select>
     </label>
-    <button id="btnMode">✏️ かく</button>
     <button id="btnEraser">🧽 けしゴム</button>
     <span class="sep"></span>
     <button id="btnWav">🎵 WAVで保存</button>
@@ -192,7 +189,7 @@ button,select,input{touch-action:manipulation}
   <div id="selBar">
     <button id="btnLyric" disabled>🔤 歌詞をかえる</button>
     <button id="btnDelNote" class="warn" disabled>🗑 この音符をけす</button>
-    <span class="small" id="rollHelp">タップ：音符をおく ／ ドラッグ：うごかす・のばす ／ 右はし：長さ ／ 上の目もり：再生する場所 ／ ✋にすると指でスクロール</span>
+    <span class="small" id="rollHelp">長おし（マウスはクリック）：音符をおく ／ 指でなぞる：スクロール ／ 音符をドラッグ：うごかす ／ 右はし：長さ ／ 上の目もり：再生する場所</span>
   </div>
   <div id="rollWrap"><div id="rollSpace"><canvas id="roll"></canvas><div id="playLine"></div></div></div>
   <div id="songMsg" class="msg"></div>
@@ -924,7 +921,8 @@ const roll = $('roll'), rc = roll.getContext('2d'), wrap = $('rollWrap'), playLi
 const COARSE = window.matchMedia && matchMedia('(pointer: coarse)').matches;
 const KW = 64, RUL = COARSE ? 30 : 24, CW = COARSE ? 30 : 22, RH = COARSE ? 26 : 18, PMIN = 36, PMAX = 96;
 let curTrack = 'vocal', sel = null, eraser = false, playStart = 0, snapV = 2, dpr = 1, drag = null;
-let panMode = false, tap = null;
+let press = null; // 指：長おしで音符をおく／なぞるとスクロール
+const LONG_MS = 380;
 const nRows = () => curTrack === 'drum' ? DRUMS.length : PMAX - PMIN + 1;
 const rowOf = p => curTrack === 'drum' ? p : PMAX - p;
 const pOfRow = r => curTrack === 'drum' ? r : PMAX - r;
@@ -1025,8 +1023,6 @@ function eraseAt(x, y){ const h = hitAt(x, y); if (h){ const a = PJ.tracks[curTr
 roll.addEventListener('pointerdown', e => {
   if (e.button === 2) return;
   const { x, y } = ptOf(e), sl = wrap.scrollLeft, st = wrap.scrollTop;
-  // ✋モードの指：スクロール優先。動かさずにはなしたら「タップ」として音符を選ぶ
-  if (panMode && e.pointerType === 'touch'){ tap = { x, y, id: e.pointerId }; return; }
   if (y < st + RUL){
     if (x >= sl + KW){ playStart = Math.max(0, Math.min(ticks() - 1, Math.floor((x - KW) / CW / 4) * 4)); drawRoll(); }
     return;
@@ -1043,17 +1039,38 @@ roll.addEventListener('pointerdown', e => {
     const edge = KW + (hit.s + hit.l) * CW;
     drag = (x > edge - 8 && hit.l * CW > 14) ? { mode: 'resize', n: hit, before } : { mode: 'move', n: hit, x0: x, y0: y, s0: hit.s, p0: hit.p, before };
     previewNote(curTrack, hit.p, hit);
+  } else if (e.pointerType === 'touch'){
+    // 指：すぐには置かない。長おしで置く／動かしたらスクロール
+    const id = e.pointerId;
+    press = { id, cx: e.clientX, cy: e.clientY, sl, st, mode: 'wait', before,
+      timer: setTimeout(() => {
+        if (!press || press.id !== id || press.mode !== 'wait') return;
+        const n = addNoteAt(tk, p); press.mode = 'placed';
+        drag = curTrack === 'drum' ? { mode: 'none', before } : { mode: 'resize', n, before };
+        if (navigator.vibrate) try { navigator.vibrate(15); } catch (er) {}
+      }, LONG_MS) };
+    return;
   } else {
-    const s = Math.floor(tk / snapV) * snapV;
-    const n = { s, l: curTrack === 'drum' ? 1 : snapV, p };
-    if (curTrack === 'vocal') n.lyric = 'ら';
-    PJ.tracks[curTrack].push(n); sel = n;
+    const n = addNoteAt(tk, p);
     drag = curTrack === 'drum' ? { mode: 'none', before } : { mode: 'resize', n, before };
-    previewNote(curTrack, p, n);
   }
   drawRoll();
 });
+function addNoteAt(tk, p){
+  const s = Math.max(0, Math.min(ticks() - 1, Math.floor(tk / snapV) * snapV));
+  const n = { s, l: curTrack === 'drum' ? 1 : Math.min(snapV, ticks() - s), p };
+  if (curTrack === 'vocal') n.lyric = 'ら';
+  PJ.tracks[curTrack].push(n); sel = n;
+  previewNote(curTrack, p, n); drawRoll();
+  return n;
+}
 roll.addEventListener('pointermove', e => {
+  if (press && press.id === e.pointerId && press.mode !== 'placed'){
+    const dx = e.clientX - press.cx, dy = e.clientY - press.cy;
+    if (press.mode === 'wait' && Math.hypot(dx, dy) > 8){ clearTimeout(press.timer); press.mode = 'pan'; }
+    if (press.mode === 'pan'){ wrap.scrollLeft = press.sl - dx; wrap.scrollTop = press.st - dy; }
+    return;
+  }
   if (!drag) return;
   const { x, y } = ptOf(e);
   if (drag.mode === 'erase') eraseAt(x, y);
@@ -1070,20 +1087,14 @@ roll.addEventListener('pointermove', e => {
 });
 function endDrag(){ if (!drag) return; if (snapTracks() !== drag.before){ pushUndo(drag.before); saveLocal(); } drag = null; drawRoll(); }
 roll.addEventListener('pointerup', e => {
-  if (tap && tap.id === e.pointerId){
-    const { x, y } = ptOf(e); const t0 = tap; tap = null;
-    if (Math.hypot(x - t0.x, y - t0.y) > 10) return;
-    if (y < wrap.scrollTop + RUL){
-      if (x >= wrap.scrollLeft + KW){ playStart = Math.max(0, Math.min(ticks() - 1, Math.floor((x - KW) / CW / 4) * 4)); drawRoll(); }
-      return;
-    }
-    const h = hitAt(x, y);
-    sel = h || null; if (h) previewNote(curTrack, h.p, h);
-    drawRoll(); return;
+  if (press && press.id === e.pointerId){
+    const pr = press; press = null; clearTimeout(pr.timer);
+    if (pr.mode === 'wait'){ sel = null; drawRoll(); return; }  // 空いた所をタップ：選ぶのをやめる
+    if (pr.mode === 'pan') return;
   }
   endDrag();
 });
-roll.addEventListener('pointercancel', () => { tap = null; endDrag(); });
+roll.addEventListener('pointercancel', () => { if (press){ clearTimeout(press.timer); press = null; } endDrag(); });
 function updateSelBar(){
   $('btnLyric').style.display = curTrack === 'vocal' ? '' : 'none';
   $('btnLyric').disabled = !sel; $('btnDelNote').disabled = !sel;
@@ -1102,12 +1113,6 @@ function deleteSel(){
 }
 $('btnLyric').onclick = () => { if (sel && curTrack === 'vocal') editLyric(sel); };
 $('btnDelNote').onclick = deleteSel;
-$('btnMode').onclick = () => {
-  panMode = !panMode;
-  $('btnMode').textContent = panMode ? '✋ うごかす' : '✏️ かく';
-  $('btnMode').classList.toggle('pan', panMode);
-  wrap.classList.toggle('pan', panMode);
-};
 roll.addEventListener('contextmenu', e => e.preventDefault());
 roll.addEventListener('dblclick', e => {
   if (curTrack !== 'vocal') return;
